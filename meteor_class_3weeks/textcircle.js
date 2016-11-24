@@ -41,6 +41,19 @@ if (Meteor.isClient) {
 			return users;
 		}
 	})
+
+    Template.navbar.events({
+		"click .js-add-doc":function(event){
+			event.preventDefault();
+			console.log("Add a new doc!");
+			if (!Meteor.user()) {//user not available
+				alert("You need to login first")
+			} else {
+				// they are logged in ... lets insert a doc
+				
+			}
+		}
+	})
 }// end isClient...
 
 if (Meteor.isServer) {
