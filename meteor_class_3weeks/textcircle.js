@@ -4,12 +4,8 @@ EditingUsers = new Mongo.Collection("editingUsers");
 if (Meteor.isClient) {
 	Template.editor.helpers({
 		docid:function(){
-			var doc = Documents.findOne();
-			if (doc) {
-				return doc._id;
-			} else {
-				return undefined;
-			}
+			setupCurrentDocument();
+			return Session.get("docid");
 		},
 		config:function(){
 			return function(editor){
@@ -50,7 +46,8 @@ if (Meteor.isClient) {
 				alert("You need to login first")
 			} else {
 				// they are logged in ... lets insert a doc
-				
+				var id = Meteor.call("addDoc");
+				console.log("event got an id back: " + id);
 			}
 		}
 	})
@@ -66,6 +63,20 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
+	addDoc:function(){
+		var doc;
+		if (!this.userId) { // not logged in
+			return;
+		}
+		else {
+			doc = {owner:this.userId, createdOn:new Date(),
+				title:"my new doc"};
+			var id = Documents.insert(doc);
+			console.log("addDoc method: got an id " + id);
+			return id;
+
+		}
+	},
 	addEditingUser:function(){
 		var doc, user, eusers;
 		doc = Documents.findOne();
@@ -86,6 +97,16 @@ Meteor.methods({
 		EditingUsers.upsert({_id:eusers._id}, eusers);
 	}
 })
+
+function setupCurrentDocument(){
+	var doc;
+	if(!Session.get("docid")) {
+		doc = Documents.findOne();
+		if (doc) {
+			Session.set("docid", doc._id);
+		}
+	}
+}
 
 function fixObjectKeys(obj) {
 	var newObj = {};
