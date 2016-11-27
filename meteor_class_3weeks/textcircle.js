@@ -37,6 +37,30 @@ if (Meteor.isClient) {
 			return users;
 		}
 	})
+	
+	Template.navbar.helpers({
+		documents:function(){
+			return Documents.find({});
+		}
+	})
+
+	Template.docMeta.helpers({
+		document:function(){
+			return Documents.findOne({_id:Session.get("docid")});
+		}
+	})
+
+	Template.editableText.helpers({
+		userCanEdit:function(doc,Collection) {
+			// can edit if the current doc is owned by me.
+			doc = Documents.findOne({_id:Session.get("docid"), owner:Meteor.userId()});
+			if (doc) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	})
 
     Template.navbar.events({
 		"click .js-add-doc":function(event){
@@ -46,11 +70,20 @@ if (Meteor.isClient) {
 				alert("You need to login first")
 			} else {
 				// they are logged in ... lets insert a doc
-				var id = Meteor.call("addDoc");
-				console.log("event got an id back: " + id);
+				var id = Meteor.call("addDoc", function(err, res){
+					if (!err) {
+						console.log("event callback received id: " + res);
+						Session.set("docid", res);
+					}
+				});
 			}
+		},
+		"click .js-load-doc":function(event){
+			console.log(this);
+			Session.set("docid", this._id);
 		}
 	})
+
 }// end isClient...
 
 if (Meteor.isServer) {
