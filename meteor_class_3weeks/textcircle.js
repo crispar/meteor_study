@@ -2,6 +2,8 @@ this.Documents = new Mongo.Collection("documents");
 EditingUsers = new Mongo.Collection("editingUsers");
 
 if (Meteor.isClient) {
+	Meteor.subscribe("documents");
+	Meteor.subscribe("editingUsers");
 	Template.editor.helpers({
 		docid:function(){
 			setupCurrentDocument();
@@ -40,13 +42,23 @@ if (Meteor.isClient) {
 	
 	Template.navbar.helpers({
 		documents:function(){
-			return Documents.find({});
+			return Documents.find();
 		}
 	})
 
 	Template.docMeta.helpers({
 		document:function(){
 			return Documents.findOne({_id:Session.get("docid")});
+		},
+		canEdit:function(){
+			var doc;
+			doc = Documents.findOne({_id:Session.get("docid")});
+			if(doc){
+				if(doc.owner == Meteor.userId()){
+					return true;
+				}
+			}
+			return false;
 		}
 	})
 
@@ -84,6 +96,26 @@ if (Meteor.isClient) {
 		}
 	})
 
+	Template.docMeta.events({
+		"click .js-tog-private":function(event){
+			console.log(event.target.checked);
+			var doc = {_id:Session.get("docid"), isPrivate:event.target.checked};
+			Meteor.call("updateDocPrivacy", doc);
+			Meteor.call("testMethod", function(){
+				console.log("method callback!");
+			})
+			console.log("After the method!");
+			console.log("1. start");
+			console.log($(event.target).data());
+			console.log("2. start");
+			console.log(Event.target);
+			console.log("3. start");
+			console.log(this);
+			console.log("4. start");
+			console.log(Documents.findOne());
+		}
+	})
+
 }// end isClient...
 
 if (Meteor.isServer) {
@@ -93,6 +125,18 @@ if (Meteor.isServer) {
         Documents.insert({title:"my new document"});
     }
   });
+
+  Meteor.publish("documents", function() {
+  	return Documents.find({
+		$or:[
+			{isPrivate:false},
+			{owner:this.userId}
+		]
+	});
+  })
+  Meteor.publish("editingUsers", function() {
+  	return EditingUsers.find();
+  })
 }
 
 Meteor.methods({
@@ -109,6 +153,22 @@ Meteor.methods({
 			return id;
 
 		}
+	},
+	updateDocPrivacy:function(doc) {
+		console.log("updateDocPrivacy method");
+		console.log("1.userid : " + this.userId);
+		console.log("2.userid : " + Meteor.userId);
+		console.log("3.userid : " + Meteor.user()._id);
+		console.log("4.userid : " + this.user()._id);
+		console.log(doc);
+		var realDoc = Documents.findOne({_id:doc._id, owner:this.userId});
+		if(realDoc) {
+			realDoc.isPrivate = doc.isPrivate;
+			Documents.update({_id:doc._id}, realDoc);
+		}
+	},
+	testMethod:function(){
+		console.log("In testMethod()");
 	},
 	addEditingUser:function(){
 		var doc, user, eusers;
