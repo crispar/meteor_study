@@ -4,6 +4,7 @@
 
 <body>
 	{{> navbar}}
+
 	<div class="container top-margin">
 
 		<div class="row">
@@ -28,6 +29,7 @@
 		</div>
 	</div>
 </body>
+
 <template name="navbar">
 	<nav class="navbar navbar-default navbar-fixed-top">
 		  <div class="container">
@@ -39,9 +41,11 @@
 						  new document
 					  </a>
 				  </li>
+
 				  <!-- drop down list -->
 				  <li class="dropdown">
 					  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Documents<span class="caret"></span></a>
+
 					  <ul class="dropdown-menu">
 						  {{#each documents}}
 						  <li><a href="#" class="js-load-doc">{{title}}</a></li>
@@ -50,15 +54,20 @@
 				  </li>
 				  <!-- end drop down list -->>
 			  </ul>
-			  <p class="navbar-text navbar-right">{{> loginButtons}}</p>
+				<div class="nav navbar-right">
+					<div class="navbar-text">
+						{{> loginButtons align="right"}}
+					</div>
+				</div>
 		  </div>
 	</nav>
 </template>
-<template name="editor">	
+
+<template name="editor">
 	{{>sharejsCM docid=docid onRender=config id="editor" mode="javascript"}}
 </template>
 
-<template name="viewer">	
+<template name="viewer">
 	<iframe id="viewer_iframe">
 	</iframe>
 </template>
@@ -77,10 +86,10 @@
 	{{/with}}
 </template>
 
-<template name="editingUsers"> 
+<template name="editingUsers">
 	Editors:
 	{{#each users}}
 	<span class="label label-success">{{firstname}} </span>
-		     
+
 	{{/each}}
 </template>
