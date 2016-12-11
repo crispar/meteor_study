@@ -25,3 +25,6 @@ ian:accounts-ui-bootstrap-3
 session
 mizzao:sharejs-codemirror
 babrahams:editable-text
+iron:router
+aldeed:autoform
+aldeed:collection2
