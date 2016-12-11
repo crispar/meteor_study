@@ -1,22 +1,28 @@
-// subscriptions - allow read access to collections
+// code that is only sent to the client
+
+// subscribe to read data
 Meteor.subscribe("documents");
 Meteor.subscribe("editingUsers");
+Meteor.subscribe("comments");
 
+// set up the iron router
 Router.configure({
-  layoutTemplate:'ApplicationLayout'
+  layoutTemplate: 'ApplicationLayout'
 });
 
-Router.route('/', function() {
-  console.log("you hit /");
-  this.render('navbar', {to:"header"});
-  this.render('docList', {to:"main"});
+// 'home' page
+Router.route('/', function () {
+  console.log("you hit / ");
+  this.render("navbar", {to:"header"});
+  this.render("docList", {to:"main"});
 });
 
-Router.route('/documents/:_id', function() {
-  console.log("you hit /documents "+this.params._id);
+// individual document page
+Router.route('/documents/:_id', function () {
+  console.log("you hit /documents  "+this.params._id);
   Session.set("docid", this.params._id);
-  this.render('navbar', {to:"header"});
-  this.render('docItem', {to:"main"});
+  this.render("navbar", {to:"header"});
+  this.render("docItem", {to:"main"});
 });
 
 Template.editor.helpers({
@@ -65,11 +71,11 @@ Template.navbar.helpers({
 })
 
 Template.docMeta.helpers({
-  // return current document
+  // find current document
   document:function(){
     return Documents.findOne({_id:Session.get("docid")});
   },
-  // return true if I am allowed to edit the current doc, false otherwise
+  // test if a user is allowed to edit current doc
   canEdit:function(){
     var doc;
     doc = Documents.findOne({_id:Session.get("docid")});
@@ -83,7 +89,7 @@ Template.docMeta.helpers({
 })
 
 Template.editableText.helpers({
-  // return true if I am allowed to edit the current doc, false otherwise
+    // test if a user is allowed to edit current doc
   userCanEdit : function(doc,Collection) {
     // can edit if the current doc is owned by me.
     doc = Documents.findOne({_id:Session.get("docid"), owner:Meteor.userId()});
@@ -96,6 +102,23 @@ Template.editableText.helpers({
   }
 })
 
+Template.docList.helpers({
+  documents:function() {
+    return Documents.find();
+  }
+})
+
+Template.insertCommentForm.helpers({
+  docid:function(){
+    return Session.get("docid");
+  }
+})
+
+Template.commentList.helpers({
+  comments:function() {
+    return Comments.find({docid:Session.get("docid")});
+  }
+})
 /////////
 /// EVENTS
 ////////

@@ -1,11 +1,11 @@
 Meteor.methods({
   addComment:function(comment){
     console.log("addComment method running!");
-    if (Meteor.userID) {// We have a user
-      comment.createOn = new Date();
-      comment.userID = this.userId;
+    if (this.userId) {// We have a user
+      comment.owner = this.userId;
       return Comments.insert(comment);
     }
+    console.log("did not add comment as user not logged in.");
     return;
   },
   // method to add a new document
@@ -24,7 +24,6 @@ Meteor.methods({
   },
   // method to change privacy flag on a docuement
   updateDocPrivacy:function(doc){
-    console.log("updateDocPrivacy method");
     console.log("updateDocPrivacy method");
     console.log("1.userid : " + this.userId);
     console.log("2.userid : " + Meteor.userId);

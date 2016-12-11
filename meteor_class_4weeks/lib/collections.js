@@ -1,9 +1,11 @@
-// documents collection
+// code sent to client and server
+// which gets loaded before anything else (since it is in the lib folder)
 this.Documents = new Mongo.Collection("documents");
 // editing users collection
 EditingUsers = new Mongo.Collection("editingUsers");
 Comments = new Mongo.Collection("comments");
-Comments.attachScheme(new SimpleSchema({
+
+Comments.attachSchema(new SimpleSchema({
   title: {
     type: String,
     label: "Title",
@@ -13,5 +15,11 @@ Comments.attachScheme(new SimpleSchema({
     type: String,
     label: "Comment",
     max:1000
-  }
+  },
+  docId:{
+    type: String,
+  },
+  owner:{
+    type: String, 
+  },
 }));

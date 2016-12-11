@@ -60,7 +60,7 @@ launch-screen@1.1.0
 livedata@1.0.18
 localstorage@1.0.12
 logging@1.1.16
-mdg:validation-error@0.2.0
+mdg:validation-error@0.5.1
 meteor@1.6.0
 meteor-base@1.0.4
 minifier-css@1.2.15
@@ -72,7 +72,7 @@ mobile-experience@1.0.4
 mobile-status-bar@1.0.13
 modules@0.7.7
 modules-runtime@0.7.7
-momentjs:moment@2.10.6
+momentjs:moment@2.17.1
 mongo@1.1.14
 mongo-id@1.0.6
 mongo-livedata@1.0.12
